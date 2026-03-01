@@ -10,6 +10,7 @@ Clone the repo, then run `npm install` to generate the `node_modules` folder wit
 
 
 
+Understand sharp for your development and how it used
 
 # sharp
 
