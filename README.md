@@ -1,6 +1,11 @@
-## Installation & Usage
+# My Project
 
-After cloning the repository, install the required dependencies by running `npm install` (this will create the `node_modules` folder). To start the backend server, use `npm run dev`, and for the frontend, spin up a simple HTTP server with `python -m http.server 8000` (or `python3 -m http.server 8000` on some systems).
+![App Icon](https://raw.githubusercontent.com/Gatuso-code/manage-student-clearance/main/icon-512x512.png)
+
+## 🚀 Quick Start
+
+Clone the repo, then run `npm install` to generate the `node_modules` folder with all dependencies. Launch the backend with `npm run dev` and serve the frontend using `python -m http.server 8000`.
+
 
 
 
