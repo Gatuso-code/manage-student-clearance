@@ -1,8 +1,10 @@
-# My Project
+# Student Clearance Management System App Icon
 
 ![App Icon](https://raw.githubusercontent.com/Gatuso-code/manage-student-clearance/main/icon-512x512.png)
 
-## 🚀 Quick Start
+## 🚀 Installation and Usage 
+
+# do the following to run rhe project in your IDE
 
 Clone the repo, then run `npm install` to generate the `node_modules` folder with all dependencies. Launch the backend with `npm run dev` and serve the frontend using `python -m http.server 8000`.
 
