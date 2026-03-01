@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Staff Dashboard - Clearance System</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Clearance">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0d6efd">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts & Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Staff Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-user-tie"></i>
+                <h3 class="user-name">Loading...</h3>
+                <p class="user-role">Staff</p>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#dashboard" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#pending">
+                    <i class="fas fa-clock"></i> Pending Approvals
+                </a>
+                <a href="#approved">
+                    <i class="fas fa-check-circle"></i> Approved
+                </a>
+                <a href="#rejected">
+                    <i class="fas fa-times-circle"></i> Rejected
+                </a>
+                <a href="#history">
+                    <i class="fas fa-history"></i> History
+                </a>
+                <a href="#profile">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <button class="btn btn-primary" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span class="user-name">Loading...</span>
+                    <div class="user-avatar"></div>
+                </div>
+            </div>
+
+            <!-- Pull to Refresh Indicator -->
+            <div class="pull-to-refresh">
+                <i class="fas fa-arrow-down"></i> Pull to refresh
+            </div>
+
+            <!-- DASHBOARD TAB -->
+            <div id="dashboard" class="tab-content active">
+                <h2>Staff Dashboard</h2>
+                
+                <!-- Stats Cards -->
+                <div class="cards-grid">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-title">Pending Approvals</div>
+                        <div class="stat-value" id="stat-pendingRequests">0</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-title">Approved Today</div>
+                        <div class="stat-value" id="stat-approvedToday">0</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);">
+                        <div class="stat-icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="stat-title">Total Processed</div>
+                        <div class="stat-value" id="stat-totalProcessed">0</div>
+                    </div>
+                </div>
+
+                <!-- Pending Requests Card -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3>Pending Approvals</h3>
+                        <a href="#pending" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Type</th>
+                                        <th>Submitted</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentPendingRequests">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PENDING TAB -->
+            <div id="pending" class="tab-content">
+                <h2>Pending Approvals</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Type</th>
+                                        <th>Submitted</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingRequestsTable">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPROVED TAB -->
+            <div id="approved" class="tab-content">
+                <h2>Approved Requests</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Approved Date</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="approvedRequestsTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REJECTED TAB -->
+            <div id="rejected" class="tab-content">
+                <h2>Rejected Requests</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Rejected Date</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rejectedRequestsTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY TAB -->
+            <div id="history" class="tab-content">
+                <h2>Action History</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Student</th>
+                                        <th>Type</th>
+                                        <th>Action</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE TAB -->
+            <div id="profile" class="tab-content">
+                <h2>My Profile</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="user-avatar" style="width: 100px; height: 100px; margin: 20px auto; font-size: 40px; line-height: 100px;">
+                                JS
+                            </div>
+                            <h3 class="staff-name">Loading...</h3>
+                            <p class="text-muted staff-id">ID: Loading...</p>
+                            <div class="badge badge-info staff-department">Department: Loading...</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Staff Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="profileFullName">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="profileEmail" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="profilePhone">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-control" id="profileDepartment" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Position</label>
+                                    <input type="text" class="form-control" id="profilePosition">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approval Modal -->
+    <div id="approvalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Process Clearance Request</h3>
+                <span class="close" onclick="closeModal('approvalModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="requestInfo" class="alert alert-info"></div>
+                <form id="approvalForm">
+                    <input type="hidden" id="detailId">
+                    <div class="form-group">
+                        <label class="form-label">Decision</label>
+                        <select class="form-control" id="decision" required>
+                            <option value="">Select Decision</option>
+                            <option value="approved">✅ Approve</option>
+                            <option value="rejected">❌ Reject</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Remarks</label>
+                        <textarea class="form-control" id="approvalRemarks" rows="3" 
+                                  placeholder="Add any remarks or reason for rejection..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('approvalModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitApproval()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i> You are offline. Some features may be limited.
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <div class="install-prompt-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="install-prompt-text">
+                <div class="install-prompt-title">Install Clearance App</div>
+                <div class="install-prompt-description">Get faster access with one tap on your home screen</div>
+            </div>
+        </div>
+        <div class="install-prompt-buttons">
+            <button class="btn btn-primary" style="flex: 1;" id="installBtn">Install</button>
+            <button class="btn btn-secondary" style="flex: 1;" id="laterBtn">Later</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/staff.js"></script>
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+            });
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target) && window.innerWidth < 1024) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Tab navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabContents.forEach((tab, index) => {
+                if (index !== 0) tab.style.display = 'none';
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.id === 'logoutBtn') return;
+                    
+                    e.preventDefault();
+                    
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    
+                    tabContents.forEach(tab => tab.style.display = 'none');
+                    
+                    const selectedTab = document.getElementById(targetId);
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        
+                        // Close sidebar on mobile after selection
+                        if (window.innerWidth < 1024) {
+                            document.getElementById('sidebar').classList.remove('active');
+                        }
+                        
+                        // Load data
+                        if (targetId === 'dashboard') {
+                            loadDashboardStats();
+                            loadRecentPendingRequests();
+                        } else if (targetId === 'pending') {
+                            loadAllPendingRequests();
+                        } else if (targetId === 'approved') {
+                            loadApprovedRequests();
+                        } else if (targetId === 'rejected') {
+                            loadRejectedRequests();
+                        } else if (targetId === 'history') {
+                            loadActionHistory();
+                        } else if (targetId === 'profile') {
+                            loadStaffProfile();
+                        }
+                    }
+                });
+            });
+            
+            // Handle initial load
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            const activeLink = document.querySelector(`.sidebar-menu a[href="#${hash}"]`);
+            if (activeLink) activeLink.click();
+        });
+
+        // Online/Offline handling
+        window.addEventListener('online', () => document.getElementById('offlineIndicator').style.display = 'none');
+        window.addEventListener('offline', () => document.getElementById('offlineIndicator').style.display = 'block');
+
+        // Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => {
+                if (!localStorage.getItem('installDismissed')) {
+                    document.getElementById('installPrompt').style.display = 'block';
+                }
+            }, 2000);
+        });
+
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+
+        document.getElementById('laterBtn')?.addEventListener('click', () => {
+            document.getElementById('installPrompt').style.display = 'none';
+            localStorage.setItem('installDismissed', 'true');
+        });
+
+        // Modal functions
+        function openApprovalModal(detailId, studentName, requestType) {
+            document.getElementById('detailId').value = detailId;
+            document.getElementById('requestInfo').innerHTML = `
+                <strong>Student:</strong> ${studentName}<br>
+                <strong>Request Type:</strong> ${requestType}
+            `;
+            document.getElementById('approvalModal').style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>

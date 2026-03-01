@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Student Dashboard - Clearance System</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Clearance">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0d6efd">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts & Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Student Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-user-graduate"></i>
+                <h3 class="user-name">Loading...</h3>
+                <p class="user-role">Student</p>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#dashboard" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#new-request">
+                    <i class="fas fa-plus-circle"></i> New Request
+                </a>
+                <a href="#my-requests">
+                    <i class="fas fa-history"></i> My Requests
+                </a>
+                <a href="#profile">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <button class="btn btn-primary" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span class="user-name">Loading...</span>
+                    <div class="user-avatar"></div>
+                </div>
+            </div>
+
+            <!-- Pull to Refresh Indicator -->
+            <div class="pull-to-refresh">
+                <i class="fas fa-arrow-down"></i> Pull to refresh
+            </div>
+
+            <!-- DASHBOARD TAB -->
+            <div id="dashboard" class="tab-content active">
+                <h2>Dashboard</h2>
+                
+                <!-- Stats Cards -->
+                <div class="cards-grid" id="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-title">Total Requests</div>
+                        <div class="stat-value" id="stat-totalRequests">0</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-title">Pending</div>
+                        <div class="stat-value" id="stat-pendingRequests">0</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-title">Completed</div>
+                        <div class="stat-value" id="stat-completedRequests">0</div>
+                    </div>
+                </div>
+
+                <!-- Recent Requests Card -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3>Recent Clearance Requests</h3>
+                        <a href="#my-requests" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentRequests">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW REQUEST TAB -->
+            <div id="new-request" class="tab-content">
+                <h2>New Clearance Request</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Request Details</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="clearanceRequestForm">
+                                <div class="form-group">
+                                    <label class="form-label">Request Type</label>
+                                    <select class="form-control" id="requestType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="graduation">🎓 Graduation Clearance</option>
+                                        <option value="withdrawal">📤 Withdrawal Clearance</option>
+                                        <option value="transfer">🔄 Transfer Clearance</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Additional Remarks</label>
+                                    <textarea class="form-control" id="remarks" rows="4" 
+                                              placeholder="Any additional information..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Submit Request
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <h5>Important Notes:</h5>
+                                <ul style="margin-top: 10px; padding-left: 20px;">
+                                    <li>Ensure all dues are cleared</li>
+                                    <li>Process takes 3-5 working days</li>
+                                    <li>Track status in "My Requests"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MY REQUESTS TAB -->
+            <div id="my-requests" class="tab-content">
+                <h2>My Clearance Requests</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Submitted</th>
+                                        <th>Completed</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allRequests">
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE TAB -->
+            <div id="profile" class="tab-content">
+                <h2>My Profile</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="user-avatar" style="width: 100px; height: 100px; margin: 20px auto; font-size: 40px; line-height: 100px;">
+                                JS
+                            </div>
+                            <h3 class="user-fullname">Loading...</h3>
+                            <p class="text-muted student-id">ID: Loading...</p>
+                            <div class="badge badge-info">Computer Science</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Personal Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="profileFullName">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="profileEmail" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-control" id="profileDepartment">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Level</label>
+                                    <input type="text" class="form-control" id="profileLevel">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="profilePhone">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" id="profileAddress" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div id="requestDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Request Details</h3>
+                <span class="close" onclick="closeModal('requestDetailsModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="requestDetailsContent">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i> You are offline. Some features may be limited.
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <div class="install-prompt-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="install-prompt-text">
+                <div class="install-prompt-title">Install Clearance App</div>
+                <div class="install-prompt-description">Get faster access with one tap on your home screen</div>
+            </div>
+        </div>
+        <div class="install-prompt-buttons">
+            <button class="btn btn-primary" style="flex: 1;" id="installBtn">Install</button>
+            <button class="btn btn-secondary" style="flex: 1;" id="laterBtn">Later</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/student.js"></script>
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+            });
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target) && window.innerWidth < 1024) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Tab navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabContents.forEach((tab, index) => {
+                if (index !== 0) tab.style.display = 'none';
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.id === 'logoutBtn') return;
+                    
+                    e.preventDefault();
+                    
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    
+                    tabContents.forEach(tab => tab.style.display = 'none');
+                    
+                    const selectedTab = document.getElementById(targetId);
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        
+                        // Close sidebar on mobile after selection
+                        if (window.innerWidth < 1024) {
+                            document.getElementById('sidebar').classList.remove('active');
+                        }
+                        
+                        // Load data
+                        if (targetId === 'dashboard') {
+                            loadDashboardStats();
+                            loadRecentRequests();
+                        } else if (targetId === 'my-requests') {
+                            loadAllRequests();
+                        } else if (targetId === 'profile') {
+                            loadStudentProfile();
+                        }
+                    }
+                });
+            });
+            
+            // Handle initial load
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            const activeLink = document.querySelector(`.sidebar-menu a[href="#${hash}"]`);
+            if (activeLink) activeLink.click();
+        });
+
+        // Online/Offline handling
+        window.addEventListener('online', () => document.getElementById('offlineIndicator').style.display = 'none');
+        window.addEventListener('offline', () => document.getElementById('offlineIndicator').style.display = 'block');
+
+        // Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => {
+                if (!localStorage.getItem('installDismissed')) {
+                    document.getElementById('installPrompt').style.display = 'block';
+                }
+            }, 2000);
+        });
+
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+
+        document.getElementById('laterBtn')?.addEventListener('click', () => {
+            document.getElementById('installPrompt').style.display = 'none';
+            localStorage.setItem('installDismissed', 'true');
+        });
+
+        // Modal close function
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>

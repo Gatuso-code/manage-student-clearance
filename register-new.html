@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Clearance System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            display: none;
+            z-index: 9999;
+        }
+        .success { background: #48bb78; }
+        .error { background: #f56565; }
+        .info { background: #4299e1; }
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .role-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .role-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Account</h2>
+        
+        <div id="message" class="message"></div>
+
+        <!-- Role Selector -->
+        <div class="role-selector">
+            <button type="button" class="role-btn active" id="studentBtn" onclick="setRole('student')">
+                <i class="fas fa-user-graduate"></i> Student
+            </button>
+            <button type="button" class="role-btn" id="staffBtn" onclick="setRole('staff')">
+                <i class="fas fa-chalkboard-teacher"></i> Staff
+            </button>
+        </div>
+
+        <form id="registerForm">
+            <input type="hidden" id="role" value="student">
+            
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="fullName" required placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="email" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label>Username *</label>
+                <input type="text" id="username" required placeholder="Choose a username">
+            </div>
+
+            <!-- Student Fields -->
+            <div id="studentFields">
+                <div class="form-group">
+                    <label>Student ID *</label>
+                    <input type="text" id="studentId" required placeholder="e.g., STU001">
+                </div>
+                <div class="form-group">
+                    <label>Department *</label>
+                    <select id="department" required>
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Business">Business</option>
+                        <option value="Medicine">Medicine</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Level</label>
+                    <select id="level">
+                        <option value="">Select Level</option>
+                        <option value="Year 1">Year 1</option>
+                        <option value="Year 2">Year 2</option>
+                        <option value="Year 3">Year 3</option>
+                        <option value="Year 4">Year 4</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Staff Fields (hidden by default) -->
+            <div id="staffFields" style="display:none">
+                <div class="form-group">
+                    <label>Staff ID *</label>
+                    <input type="text" id="staffId" placeholder="e.g., STF001">
+                </div>
+                <div class="form-group">
+                    <label>Department *</label>
+                    <select id="staffDepartment">
+                        <option value="">Select Department</option>
+                        <option value="Library">Library</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Registrar">Registrar</option>
+                        <option value="IT Services">IT Services</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Position</label>
+                    <input type="text" id="position" placeholder="e.g., Clearance Officer">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Phone (Optional)</label>
+                <input type="tel" id="phone" placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-group">
+                <label>Password * (min 6 characters)</label>
+                <input type="password" id="password" required placeholder="Create a password">
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password *</label>
+                <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+            </div>
+
+            <button type="submit" id="submitBtn">Register</button>
+        </form>
+
+        <div class="login-link">
+            <a href="login.html">Already have an account? Login here</a>
+        </div>
+    </div>
+
+    <script>
+        // Set role (student/staff)
+        function setRole(role) {
+            document.getElementById('role').value = role;
+            
+            // Update button styles
+            document.getElementById('studentBtn').classList.remove('active');
+            document.getElementById('staffBtn').classList.remove('active');
+            
+            if (role === 'student') {
+                document.getElementById('studentBtn').classList.add('active');
+                document.getElementById('studentFields').style.display = 'block';
+                document.getElementById('staffFields').style.display = 'none';
+                
+                // Update required fields
+                document.getElementById('studentId').required = true;
+                document.getElementById('department').required = true;
+                document.getElementById('staffId').required = false;
+                document.getElementById('staffDepartment').required = false;
+            } else {
+                document.getElementById('staffBtn').classList.add('active');
+                document.getElementById('studentFields').style.display = 'none';
+                document.getElementById('staffFields').style.display = 'block';
+                
+                // Update required fields
+                document.getElementById('studentId').required = false;
+                document.getElementById('department').required = false;
+                document.getElementById('staffId').required = true;
+                document.getElementById('staffDepartment').required = true;
+            }
+        }
+
+        // Show message function
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + type;
+            msg.style.display = 'block';
+            
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        // Handle form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const role = document.getElementById('role').value;
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            // Validate passwords
+            if (password !== confirm) {
+                showMessage('Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            // Build data
+            const data = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: password,
+                role: role,
+                full_name: document.getElementById('fullName').value,
+                phone_number: document.getElementById('phone').value || null
+            };
+
+            // Add role-specific fields
+            if (role === 'student') {
+                data.student_id = document.getElementById('studentId').value;
+                data.department = document.getElementById('department').value;
+                data.level = document.getElementById('level').value || null;
+            } else {
+                data.staff_id = document.getElementById('staffId').value;
+                data.department = document.getElementById('staffDepartment').value;
+                data.position = document.getElementById('position').value || null;
+            }
+
+            // Disable button
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Registering...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('✅ Registration successful! Redirecting to login...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showMessage(result.error || 'Registration failed', 'error');
+                    btn.disabled = false;
+                    btn.textContent = 'Register';
+                }
+            } catch (error) {
+                showMessage('Cannot connect to server. Make sure backend is running!', 'error');
+                console.error(error);
+                btn.disabled = false;
+                btn.textContent = 'Register';
+            }
+        });
+
+        // Pre-fill with test data for easy testing
+        window.onload = function() {
+            document.getElementById('fullName').value = 'Test Student';
+            document.getElementById('email').value = 'student' + Date.now() + '@test.com';
+            document.getElementById('username').value = 'student' + Date.now();
+            document.getElementById('password').value = 'Test123';
+            document.getElementById('confirmPassword').value = 'Test123';
+            document.getElementById('studentId').value = 'STU' + Date.now();
+        };
+    </script>
+</body>
+</html>

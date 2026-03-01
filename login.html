@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Student Clearance System - Login</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Clearance">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0d6efd">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts & Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .register-link {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+        
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .register-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .register-link i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-university"></i>
+                <h1>Student Clearance System</h1>
+                <p>University Management Portal</p>
+            </div>
+            <div class="login-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="username">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Enter your username" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Enter your password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                
+                <!-- Register Link - Updated to register-new.html -->
+                <div class="register-link">
+                    <i class="fas fa-user-plus"></i>
+                    <a href="register-new.html">Don't have an account? Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i> You are offline. Please check your connection.
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <div class="install-prompt-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="install-prompt-text">
+                <div class="install-prompt-title">Install Clearance App</div>
+                <div class="install-prompt-description">Get faster access with one tap on your home screen</div>
+            </div>
+        </div>
+        <div class="install-prompt-buttons">
+            <button class="btn btn-primary" style="flex: 1;" id="installBtn">
+                <i class="fas fa-download"></i> Install
+            </button>
+            <button class="btn btn-secondary" style="flex: 1;" id="laterBtn">
+                <i class="fas fa-clock"></i> Later
+            </button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered successfully');
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
+        // Handle offline/online events
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        function updateOnlineStatus() {
+            const offlineIndicator = document.getElementById('offlineIndicator');
+            if (offlineIndicator) {
+                if (navigator.onLine) {
+                    offlineIndicator.style.display = 'none';
+                } else {
+                    offlineIndicator.style.display = 'block';
+                }
+            }
+        }
+
+        // Install Prompt
+        let deferredPrompt;
+        const installPrompt = document.getElementById('installPrompt');
+        const installBtn = document.getElementById('installBtn');
+        const laterBtn = document.getElementById('laterBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            setTimeout(() => {
+                if (installPrompt && !localStorage.getItem('installDismissed')) {
+                    installPrompt.style.display = 'block';
+                }
+            }, 2000);
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                
+                deferredPrompt = null;
+                installPrompt.style.display = 'none';
+            });
+        }
+
+        if (laterBtn) {
+            laterBtn.addEventListener('click', () => {
+                installPrompt.style.display = 'none';
+                localStorage.setItem('installDismissed', 'true');
+            });
+        }
+    </script>
+</body>
+</html>
