@@ -1,3 +1,9 @@
+## Installation & Usage
+
+After cloning the repository, install the required dependencies by running `npm install` (this will create the `node_modules` folder). To start the backend server, use `npm run dev`, and for the frontend, spin up a simple HTTP server with `python -m http.server 8000` (or `python3 -m http.server 8000` on some systems).
+
+
+
 # sharp
 
 <img src="https://sharp.pixelplumbing.com/sharp-logo.svg" width="160" height="160" alt="sharp logo" align="right">
